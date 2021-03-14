@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30309.148
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grep_For_Tibetan", "Grep_For_Tibetan.csproj", "{61CB899F-BFCB-403D-A416-E88023FA9CCD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{61CB899F-BFCB-403D-A416-E88023FA9CCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61CB899F-BFCB-403D-A416-E88023FA9CCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61CB899F-BFCB-403D-A416-E88023FA9CCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61CB899F-BFCB-403D-A416-E88023FA9CCD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4B2EEA65-2819-46B9-8E79-0E100213C2E3}
+	EndGlobalSection
+EndGlobal
