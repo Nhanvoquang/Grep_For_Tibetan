@@ -32,12 +32,13 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsUnicodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.disclaimerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.howToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.closeMeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -67,20 +68,12 @@
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.saveAsToolStripMenuItem,
-            this.saveAsUnicodeToolStripMenuItem});
+            this.saveAsUnicodeToolStripMenuItem,
+            this.closeMeToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "&File";
-            // 
-            // aboutToolStripMenuItem
-            // 
-            this.aboutToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.disclaimerToolStripMenuItem,
-            this.aboutToolStripMenuItem1,
-            this.howToToolStripMenuItem});
-            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(52, 20);
-            this.aboutToolStripMenuItem.Text = "&About";
+            this.fileToolStripMenuItem.Click += new System.EventHandler(this.fileToolStripMenuItem_Click);
             // 
             // saveAsToolStripMenuItem
             // 
@@ -95,6 +88,16 @@
             this.saveAsUnicodeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveAsUnicodeToolStripMenuItem.Text = "Save As &Unicode";
             this.saveAsUnicodeToolStripMenuItem.Click += new System.EventHandler(this.saveAsUnicodeToolStripMenuItem_Click);
+            // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.disclaimerToolStripMenuItem,
+            this.aboutToolStripMenuItem1,
+            this.howToToolStripMenuItem});
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(52, 20);
+            this.aboutToolStripMenuItem.Text = "&About";
             // 
             // disclaimerToolStripMenuItem
             // 
@@ -115,6 +118,13 @@
             this.howToToolStripMenuItem.Name = "howToToolStripMenuItem";
             this.howToToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
             this.howToToolStripMenuItem.Text = "How To";
+            // 
+            // closeMeToolStripMenuItem
+            // 
+            this.closeMeToolStripMenuItem.Name = "closeMeToolStripMenuItem";
+            this.closeMeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.closeMeToolStripMenuItem.Text = "Close &Me!";
+            this.closeMeToolStripMenuItem.Click += new System.EventHandler(this.closeMeToolStripMenuItem_Click);
             // 
             // Form3
             // 
@@ -149,5 +159,6 @@
         private System.Windows.Forms.ToolStripMenuItem disclaimerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem howToToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem closeMeToolStripMenuItem;
     }
 }

@@ -80,5 +80,15 @@ namespace Grep_For_Tibetan
             var about = new frmAbout();
             about.Show();
         }
+
+        private void fileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void closeMeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }

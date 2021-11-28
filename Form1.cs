@@ -54,7 +54,9 @@ namespace Grep_For_Tibetan
             public static List<string> KeyAnds = new List<string>();
             //public static string[] KeyAnd = new string[] { };
             //KeyOrs is the rule after KeyAnd then to qualify within tokens*SLength
-            public static List<string> KeyOrs = new List<string>();
+            //change to extend support for multiple OR phrases up to 
+            public const int MAXOR = 5;
+            public static List<string>[] KeyOrsE = new List<string>[MAXOR];
             //public static string[] KeyOrs = new string[] { };
             //KeyExs is the rule after KayAnd then to disqualify within tokens*SLength
             public static List<string> KeyExs = new List<string>();
@@ -66,12 +68,12 @@ namespace Grep_For_Tibetan
             public static string BegJunk = "";
             public static string EndJunk = "";
             public static string[] SplitToken = { "   ", "\t" , "\n" , "\r" };
-
+            public static string[] SplitTokenE = { "#", "@", "&" };
             public static bool KangTeng =  true;
             public const int LongWord = 4; // evarage word len 3.8 charecters
             public const int stanzasAllowedMax = 4;
-            public const int tsheMax = 128;  //phraseMax/4;  "་"  (7++)= number of sound per lines
-            public const int tsigMax = 8; //evarage 1 tsig got < 64 letter mean 512/64 = 8
+            public const int tsheMax = 256;  //phraseMax/4;  "་"  (7++)= number of sound per lines
+            public const int tsigMax = 16; //evarage 1 tsig got < 64 letter mean 512/64 = 8
             public const int phraseMax = LongWord * 8 * 4 * stanzasAllowedMax; //wordleng * 7 sound per line * 4 each stanza * 4 stansaz
             public static readonly int[] tokenMax = { tsheMax, tsigMax, phraseMax };
             public static readonly string[] strTokenMax = { "ཙེག་", "ཚིག་གྲུབ་", "Letters" };
@@ -92,14 +94,14 @@ namespace Grep_For_Tibetan
             FolderBrowserDialog FBD = new FolderBrowserDialog();
             listBox1.Enabled = true;
 
-            //FBD.SelectedPath = Application.StartupPath; 
+            FBD.SelectedPath = Application.StartupPath; 
             //FBD.SelectedPath = @"F:\CurrentWorking\HuongtichEngagework\syllogism\10 - DHARAMAS";
-            FBD.SelectedPath = @"C:\KangTengPlusName";
+            //FBD.SelectedPath = @"C:\KangTengPlusName";
             
             if (FBD.ShowDialog() == DialogResult.OK)
             {
                 button5.Text = "Hold Until Done Reading...";
-                button5.Enabled = false;
+                //button5.Enabled = false;
                 button5.Refresh();
                 int old_count = listBox1.Items.Count;
                 DirSearch_ex3(FBD.SelectedPath, listBox1);
@@ -228,8 +230,8 @@ namespace Grep_For_Tibetan
             OpenFileDialog thisDialog = new OpenFileDialog();
 
             int old_count = listBox1.Items.Count;
-            //thisDialog.InitialDirectory = Application.StartupPath;  //"c:\\";
-            thisDialog.InitialDirectory = @"F:\CurrentWorking\HuongtichEngagework\syllogism\10 - DHARAMAS";
+            thisDialog.InitialDirectory = Application.StartupPath;  //"c:\\";
+            //thisDialog.InitialDirectory = @"F:\CurrentWorking\HuongtichEngagework\syllogism\10 - DHARAMAS";
             thisDialog.Filter = "All files (*.*)|*.*|Text Files (*.txt)|*.txt";
             thisDialog.FilterIndex = 2;
             thisDialog.RestoreDirectory = true;
@@ -335,11 +337,6 @@ namespace Grep_For_Tibetan
         void process_data(string fText, string ffname)
         {
             prog.LastSaveIndx = -1;
-            
-            
-            //if (++Global.CurrentDoneItems > Global.MaximumFoundItems) !!!!
-
-
             (string Found, bool good, int tmpIndx) found = ("", false, 0);
             do
             {
@@ -608,20 +605,34 @@ namespace Grep_For_Tibetan
             if (Global.KeyAnds.Count >= 1)
             {
                 List<string> temp = new List<string>(Global.KeyAnds); //do not modified global for the next round
+                int AndkeyCnt = temp.Count;
                 temp.RemoveAt(0);
                 ret = src.IndexOf(Global.KeyAnds[0], indx);
                 if (ret < 0)
                     return ("", false, -1);
                 src2 = take_leng(src, ret);
-                if ((temp.Count > 0) && (ret >= 0))
+                if (ret >= 0)
                 {
-                    if (SearchAND(src2, temp) < 0 )
-                        return ("", false, ret);
+                    if ((temp.Count > 0) && (SearchAND(src2, temp) < 0 ))
+                            return ("", false, ret);
                     if ((Global.KeyExs.Count > 0) && (SearchEX(src2, Global.KeyExs) < 0))
                         return ("", false, ret);
-                    if ((Global.KeyOrs.Count > 0) && (SearchOR(src2, Global.KeyOrs) < 0))
-                        return ("", false, ret);
+                    //if ((Global.KeyOrs.Count > 0) && (SearchOR(src2, Global.KeyOrsE) < 0))
+                    //    return ("", false, ret);
+                    for (int i=0; i< Global.MAXOR; i++)
+                    {
+                        if (Global.KeyOrsE[i].Count == 0)
+                            break;
+                        else
+                        {
+                            if (SearchOR(src2, Global.KeyOrsE[i]) < 0)
+                            {
+                                return ("", false, ret);
+                            }
+                        }
+                    }
                 }
+                //else if ()
                 // get only Tsig or tsheg string in beg and end
                 if (ret >= 0)
                 {
@@ -629,21 +640,34 @@ namespace Grep_For_Tibetan
                 }
                 return (src2, true, ret);
             }
-            else if (Global.KeyOrs.Count >= 1)
-            {               
-                foreach (string tgt in Global.KeyOrs)
+            else if (Global.KeyOrsE[0].Count >= 1)
+            {
+                foreach (string tgt in Global.KeyOrsE[0])
                 {
                     ret = src.IndexOf(tgt, indx);
                     if (ret >= 0)
                     {
                         src2 = take_leng(src, ret);
+                        // now do the rest OR and Ex
                         if ((Global.KeyExs.Count > 0) && (SearchEX(src2, Global.KeyExs) < 0))
                             return ("", false, ret);
-                        src2 = TibFormat(src2);
-                        return (src2, true, ret);
+                        for (int i=1; i< Global.MAXOR; i++)
+                        {
+                            if (Global.KeyOrsE[i].Count == 0)
+                            {
+                                src2 = TibFormat(src2);
+                                return (src2, true, ret);
+                            }
+                            else
+                            {
+                                if (SearchOR(src2, Global.KeyOrsE[i]) < 0)
+                                {
+                                    return ("", false, ret);
+                                }
+                            }
+                        }
                     }
                 }
-
             }
             return ("", false,-1);
         }
@@ -670,9 +694,17 @@ namespace Grep_For_Tibetan
             {
                 min = ((min > item.Length) && (item.Length > 1))? (item.Length) : (min);
             }
-            foreach (string item in Global.KeyOrs)
+            for (int i = 0; i < Global.MAXOR; i++)
             {
-                min = ((min > item.Length) && (item.Length > 1)) ? (item.Length) : (min);
+                if (Global.KeyOrsE[i].Count > 0)
+                {
+                    foreach (string item in Global.KeyOrsE[i])
+                    {
+                        min = ((min > item.Length) && (item.Length > 1)) ? (item.Length) : (min);
+                    }
+                }
+                else
+                    break;
             }
             return min;
         }
@@ -713,7 +745,17 @@ namespace Grep_For_Tibetan
             {
                 //reset logic search value strings
                 Global.KeyAnds.Clear();
-                Global.KeyOrs.Clear();
+                for (int i = 0; i < Global.MAXOR; i++)
+                {
+                    if (Global.KeyOrsE[i] != null)
+                    {
+                        Global.KeyOrsE[i].Clear();
+                    }
+                    else
+                    {
+                        Global.KeyOrsE[i] = new List<string>();
+                    }
+                }
                 Global.KeyExs.Clear();
                 Global.KeyReG.Clear();
                 prog.SFound.Clear();
@@ -761,8 +803,21 @@ namespace Grep_For_Tibetan
                                 
                         // No AND, only OR
                         if (textBox2.Text.Trim().Length > 1)
+                        {
+                            string [] arrayOR = textBox2.Text.Trim().ToString().Split(Global.SplitTokenE, StringSplitOptions.RemoveEmptyEntries);
+                            for (int i=0; i< arrayOR.Length; i++)
+                            {
+                                //distriute to ORSE
+                                if (i < Global.MAXOR)
+                                    Global.KeyOrsE[i] = arrayOR[i].Split(Global.SplitToken, StringSplitOptions.RemoveEmptyEntries).ToList();
+                                else
+                                    break;
+                            }
+
+
+                        }
                             //textBox2.Text.ToString().Split().CopyTo(Global.KeyOrs, 0);
-                            Global.KeyOrs = textBox2.Text.Trim().ToString().Split(Global.SplitToken, StringSplitOptions.RemoveEmptyEntries).ToList();
+                            //Global.KeyOrs = textBox2.Text.Trim().ToString().Split(Global.SplitToken, StringSplitOptions.RemoveEmptyEntries).ToList();
                         if (textBox3.Text.Trim().Length > 1)
                             //textBox3.Text.ToString().Split().CopyTo(Global.KeyExs, 0);
                             Global.KeyExs = textBox3.Text.Trim().ToString().Split(Global.SplitToken, StringSplitOptions.RemoveEmptyEntries).ToList();
@@ -982,6 +1037,10 @@ namespace Grep_For_Tibetan
             }
         }
 
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 
     static class prog
